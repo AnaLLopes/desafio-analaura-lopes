@@ -67,8 +67,8 @@ receberPedido() {
       });
       
     this.exibirCardapio();
-    rl.question('Escolha a forma de pagamento (dinheiro, debito, credito): ', (formaDePagamento) => {
-      const valorTotal = this.calcularValorDaCompra(formaDePagamento, itens);
+    rl.question('Escolha o método de pagamento (dinheiro, debito, credito): ', (metodoDePagamento) => {
+      const valorTotal = this.calcularValorDaCompra(metodoDePagamento, itens);
       console.log(`Valor total da compra: ${valorTotal}`);
       rl.close();
       });
@@ -114,15 +114,25 @@ calcularValorDaCompra(metodoDePagamento, itens){
       return 'Não há itens principais no carrinho de compra!';
     }
 
+    if (hasPrincipal===0 && hasCombo===0){
+      return "Quantidade inválida!"
+    }
+
     if (metodoDePagamento === 'dinheiro') {
-      valorTotal *= 0.95; 
+      valorTotal = valorTotal*0.95; 
     }
     else if (metodoDePagamento === 'credito') {
-      valorTotal *= 1.03; 
+      valorTotal = valorTotal*1.03; 
     }
   }
+
+  if (itens.length===0 && metodoDePagamento==='dinheiro'){
+    return 'Quantidade inválida!'
+  }
+
     return `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
-        }
+
+        } 
   }
 
 export { CaixaDaLanchonete };
