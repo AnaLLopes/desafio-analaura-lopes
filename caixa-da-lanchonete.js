@@ -40,27 +40,26 @@ receberPedido() {
 
   function pedirItem() {
     self.exibirCardapio();
-    rl.question('Digite o código do item (ou "confirmar" para finalizar o pedido):'), (codigo) => {
+    rl.question('Digite o código do item (ou "confirmar" para finalizar o pedido): ', (codigo) => {
       if (codigo === 'confirmar') {
         rl.close();
-        self}
-    }
+        self.finalizarPedido(itens);
+      }
+      else if (self.cardapio[codigo]) {
+        rl.question(`Quantidade de ${self.cardapio[codigo].descricao}: `, (quantidade) => {
+          itens.push(`${codigo},${quantidade}`);
+          pedirItem();
+        });
+      }
+      else {
+        console.log('Item inválido! Por favor, tente novamente.');
+        pedirItem();
+      }
+    })
   }
-}
-receberFormaPagamento(itens){
-  if (self.cardapio[codigo]) {
-    rl.question('Quantidade de ${self.cardapio[codigo].descricao}:'), (quantidade) => {
-    itens.push(`${codigo},${quantidade}`);
-    pedirItem();
-      }
-    } 
-  else {
-    console.log('Item inválido! Por favor, tente novamente.');
-      pedirItem();
-      }
     }
-  
-  receberFormaPagamento(itens) {
+
+  finalizarPedido(itens){
     const readline = require('readline');
     const rl = readline.createInterface({
       input: process.stdin,
@@ -75,7 +74,7 @@ receberFormaPagamento(itens){
       });
     }
 
-calcularValorDaCompra(metodoDePagamento, itens) {
+calcularValorDaCompra(metodoDePagamento, itens){
   if (!this.metodoDePagamento.includes(metodoDePagamento)) {
     return 'Forma de pagamento inválida!';
   }
@@ -121,9 +120,9 @@ calcularValorDaCompra(metodoDePagamento, itens) {
     else if (metodoDePagamento === 'credito') {
       valorTotal *= 1.03; // Acréscimo de 3% para pagamento a crédito
     }
-  
+  }
     return `R$ ${valorTotal.toFixed(2).replace('.', ',')}`;
         }
-      }
-}
+  }
+
 export { CaixaDaLanchonete };
