@@ -1,3 +1,5 @@
+import { getSystemErrorMap } from 'util';
+
 class CaixaDaLanchonete {
 
   constructor() {
@@ -46,18 +48,37 @@ receberPedido() {
         self.finalizarPedido(itens);
       }
       else if (self.cardapio[codigo]) {
-        rl.question(`Quantidade de ${self.cardapio[codigo].descricao}: `, (quantidade) => {
-          itens.push(`${codigo},${quantidade}`);
-          pedirItem();
-        });
-      }
-      else {
+        const item = self.cardapio[codigo];
+        if (codigo === 'chantily') {
+          const temCafe = itens.some(itemStr => itemStr.startsWith('cafe'));
+          if (!temCafe) {
+            console.log('Chantily só pode ser selecionado com o Café.');
+            pedirItem();
+            return;
+          }
+        } else if (codigo === 'queijo') {
+          const temSanduiche = itens.some(itemStr => itemStr.startsWith('sanduiche'));
+          if (!temSanduiche) {
+            console.log('Queijo só pode ser selecionado com o Sanduíche.');
+            pedirItem();
+            return;
+          }
+        }
+        else {
+          rl.question(`Quantidade de ${self.cardapio[codigo].descricao}: `, (quantidade) => {
+            itens.push(`${codigo},${quantidade}`);
+            pedirItem();
+          });
+        }
+      } else {
         console.log('Item inválido! Por favor, tente novamente.');
         pedirItem();
       }
-    })
+    });
   }
-    }
+
+  pedirItem();
+}
 
   finalizarPedido(itens){
     const readline = require('readline');
@@ -81,6 +102,10 @@ calcularValorDaCompra(metodoDePagamento, itens){
     
   if (itens.length === 0) {
     return 'Não há itens no carrinho de compra!';
+  }
+
+  if (itens.length === 0 && metodoDePagamento){
+    return 'Quantidade inválida!'
   }
     
   let valorTotal = 0;
@@ -114,15 +139,11 @@ calcularValorDaCompra(metodoDePagamento, itens){
       return 'Não há itens principais no carrinho de compra!';
     }
 
-    if (hasPrincipal===0 && hasCombo===0){
-      return "Quantidade inválida!"
-    }
-
     if (metodoDePagamento === 'dinheiro') {
-      valorTotal = valorTotal*0.95; 
+      valorTotal *= 0.95;
     }
     else if (metodoDePagamento === 'credito') {
-      valorTotal = valorTotal*1.03; 
+      valorTotal *= 1.03;
     }
   }
 
